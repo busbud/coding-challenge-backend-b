@@ -15,6 +15,7 @@ The suggestions should be restricted to cities in the USA and Canada with a popu
     - each suggestion has a latitude and longitude
 - all functional tests should pass (additional tests may be implemented as necessary).
 - the final application should be [deployed to Heroku](https://devcenter.heroku.com/articles/rack).
+- feel free to add more features if you like!
 
 #### Sample responses
 
