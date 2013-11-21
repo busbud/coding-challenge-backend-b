@@ -7,16 +7,20 @@ The suggestions should be restricted to cities in the USA and Canada with a popu
 
 - the endpoint is exposed at `/suggestions`
 - the partial (or complete) search term is passed as a querystring parameter `q`
-- the caller's location can optionally be supplied via querystring parameters `lat` and `long` to help improve relative scores
-- the endpoint returns a JSON response with an array of scored suggested matches, sorting by descending score
+- the caller's location can optionally be supplied via querystring parameters `latitude` and `longitude` to help improve relative scores
+- the endpoint returns a JSON response with an array of scored suggested matches
+    - the suggestions are sorted by descending score
+    - each suggestion has a score between 0 and 1 (inclusive) indicating confidence in the suggestion (1 is most confident)
+    - each suggestion has a name which can be used to disambiguate between similarly named locations
+    - each suggestion has a latitude and longitude
 - all functional tests should pass (additional tests may be implemented as necessary).
 - the final application should be [deployed to Heroku](https://devcenter.heroku.com/articles/rack).
 
-#### Minimal sample responses
+#### Sample responses
 
 These responses are meant to provide guidance. The exact values can vary based on the data source and scoring algorithm
 
-** Near match **
+**Near match**
 
     GET /suggestions?q=Londo&latitude=43.70011&longitude=-79.4163
 
@@ -25,33 +29,33 @@ These responses are meant to provide guidance. The exact values can vary based o
   "suggestions": [
     {
       "name": "London, ON, Canada",
-      "lat": "42.98339",
-      "long": "-81.23304",
+      "latitude": "42.98339",
+      "longitude": "-81.23304",
       "score": 0.9
     },
     {
       "name": "London, OH, USA",
-      "lat": "39.88645",
-      "long": "-83.44825",
+      "latitude": "39.88645",
+      "longitude": "-83.44825",
       "score": 0.5
     },
     {
       "name": "London, KY, USA",
-      "lat": "37.12898",
-      "long": "-84.08326",
+      "latitude": "37.12898",
+      "longitude": "-84.08326",
       "score": 0.5
     },
     {
       "name": "Londontowne, MD, USA",
-      "lat": "38.93345",
-      "long": "-76.54941",
+      "latitude": "38.93345",
+      "longitude": "-76.54941",
       "score": 0.3
     }
   ]
 }
 ```
 
-** No match **
+**No match**
 
     GET /suggestions?q=SomeRandomCityInTheMiddleOfNowhere
 
