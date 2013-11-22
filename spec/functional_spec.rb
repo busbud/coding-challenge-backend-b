@@ -18,7 +18,7 @@ describe 'GET /suggestions' do
 
   describe 'with a valid city' do
     subject(:response) do
-      get '/suggestions', {:q => 'Montreal'}
+      get '/suggestions', {:q => 'London'}
     end
 
     it 'returns a 200' do
@@ -32,7 +32,7 @@ describe 'GET /suggestions' do
 
     it 'contains a match' do
       names = response.json_body['suggestions'].map { |r| r['name'] }
-      expect(names.grep(/montreal/i)).to_not be_empty
+      expect(names.grep(/london/i)).to_not be_empty
     end
 
     it 'contains latitudes and longitudes' do
