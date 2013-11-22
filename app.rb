@@ -1,6 +1,28 @@
 require 'sinatra/base'
 require 'json'
 
+class Suggest
+  Geoname = Struct.new(:id, :name, :ascii, :alt_name, :lat, :long,
+                       :feat_class, :feat_code, :country, :cc2, :admin1,
+                       :admin2, :admin3, :admin4, :population, :elevation,
+                       :dem, :tz, :modified_at)
+
+  CITIES_FILE = File.join(File.dirname(__FILE__), 'data',
+                          'cities_canada-usa.tsv')
+
+  def initialize
+    @cities = Array.new
+    File.open(CITIES_FILE) do |f|
+      f.each_line do |line|
+        city = Geoname.new(*line.chomp.split("\t"))
+        city.lat, city.long = city.lat.to_f, city.long.to_f
+        @cities << city
+      end
+    end
+    @cities.shift # Header row
+  end
+end
+
 # http://www.sinatrarb.com/
 class App < Sinatra::Base
   # Endpoints
