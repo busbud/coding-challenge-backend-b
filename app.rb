@@ -25,14 +25,14 @@ class Suggest
 
   # Suggest cities by length of matching portion of name
   def by_name(query)
-    Hash.new.tap do |scores|
-      @cities.each do |city|
-        match = [city.name, city.ascii, *city.alt_name].find do |name|
-          name.downcase.include? query.downcase
-        end
-        scores[city] = query.length / match.length.to_f if match
+    scores = Hash.new
+    @cities.each do |city|
+      match = [city.name, city.ascii, *city.alt_name].find do |name|
+        name.downcase.include? query.downcase
       end
+      scores[city] = query.length / match.length.to_f if match
     end
+    scores
   end
 end
 
