@@ -16,10 +16,23 @@ class Suggest
       f.each_line do |line|
         city = Geoname.new(*line.chomp.split("\t"))
         city.lat, city.long = city.lat.to_f, city.long.to_f
+        city.alt_name = city.alt_name.split(',')
         @cities << city
       end
     end
     @cities.shift # Header row
+  end
+
+  # Suggests cities by length of matching portion of name
+  def by_name(query)
+    Hash.new.tap do |scores|
+      @cities.each do |city|
+        match = [city.name, city.ascii, *city.alt_name].find do |name|
+          name.downcase.include? query.downcase
+        end
+        scores[city] = query.length / match.length.to_f if match
+      end
+    end
   end
 end
 
