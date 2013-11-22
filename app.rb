@@ -1,6 +1,29 @@
 require 'sinatra/base'
 require 'json'
 
+# Haversine formula <http://www.movable-type.co.uk/scripts/latlong.html>
+module Haversine
+  EARTH_RADIUS = 6373 # km
+
+  def self.rad(deg)
+    deg * Math::PI / 180
+  end
+
+  # Calculate distance in kilometers between two latitude-longitude coordinates
+  def self.distance(lat1, long1, lat2, long2)
+    lat1 = rad(lat1)
+    lat2 = rad(lat2)
+    dlat = lat2 - lat1
+    dlong = rad(long2 - long1)
+    a = Math.sin(dlat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) *
+        Math.sin(dlong / 2) ** 2
+    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    EARTH_RADIUS * c
+  end
+
+  MAX_DISTANCE = distance(-90, -180, 90, 180)
+end
+
 class Suggest
   Geoname = Struct.new(:id, :name, :ascii, :alt_name, :lat, :long,
                        :feat_class, :feat_code, :country, :cc2, :admin1,
@@ -34,6 +57,17 @@ class Suggest
     end
     scores
   end
+
+  # Suggest cities by length of matching portion of name and proximity to
+  # coordinates
+  def by_name_and_coords(query, lat, long)
+    scores = by_name(query)
+    scores.each_key do |city|
+      d = Haversine.distance(city.lat, city.long, lat, long)
+      scores[city] *= (Haversine::MAX_DISTANCE - d) / Haversine::MAX_DISTANCE
+    end
+    scores
+  end
 end
 
 # http://www.sinatrarb.com/
@@ -54,7 +88,13 @@ class App < Sinatra::Base
       halt 400, {:error => 'Invalid coordinates'}.to_json
     end
 
-    suggestions = settings.suggest.by_name(query).map do |city, score|
+    if lat
+      suggestions = settings.suggest.by_name_and_coords(query, lat, long)
+    else
+      suggestions = settings.suggest.by_name(query)
+    end
+
+    suggestions = suggestions.map do |city, score|
       {
         :name      => "#{city.name}, #{city.country}",
         :latitude  => city.lat,
