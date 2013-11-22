@@ -64,8 +64,8 @@ class Suggest
   def by_name_and_coords(query, lat, long)
     scores = by_name(query)
     scores.each_key do |city|
-      d = Haversine.distance(city.lat, city.long, lat, long)
-      scores[city] *= (Haversine::MAX_DISTANCE - d) / Haversine::MAX_DISTANCE
+      scores[city] *= 1 - Haversine.distance(city.lat, city.long, lat, long) /
+                          Haversine::MAX_DISTANCE
     end
   end
 end
