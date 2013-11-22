@@ -23,7 +23,7 @@ class Suggest
     @cities.shift # Header row
   end
 
-  # Suggests cities by length of matching portion of name
+  # Suggest cities by length of matching portion of name
   def by_name(query)
     Hash.new.tap do |scores|
       @cities.each do |city|
@@ -38,6 +38,8 @@ end
 
 # http://www.sinatrarb.com/
 class App < Sinatra::Base
+  set :suggest, Suggest.new
+
   # Endpoints
   get '/suggestions' do
     content_type :json
@@ -52,7 +54,16 @@ class App < Sinatra::Base
       halt 400, {:error => 'Invalid coordinates'}.to_json
     end
 
-    status 404
-    {:suggestions => []}.to_json
+    suggestions = settings.suggest.by_name(query).map do |city, score|
+      {
+        :name      => "#{city.name}, #{city.country}",
+        :latitude  => city.lat,
+        :longitude => city.long,
+        :score     => score
+      }
+    end.sort_by {|c| -c[:score] }
+
+    status 404 if suggestions.empty?
+    {:suggestions => suggestions}.to_json
   end
 end
