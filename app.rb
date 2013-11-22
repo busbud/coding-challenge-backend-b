@@ -50,6 +50,7 @@ class Suggest
   def by_name(query)
     scores = Hash.new
     @cities.each do |city|
+      # Try to match against each name of the city
       match = [city.name, city.ascii, *city.alt_name].find do |name|
         name.downcase.include? query.downcase
       end
@@ -66,7 +67,6 @@ class Suggest
       d = Haversine.distance(city.lat, city.long, lat, long)
       scores[city] *= (Haversine::MAX_DISTANCE - d) / Haversine::MAX_DISTANCE
     end
-    scores
   end
 end
 
