@@ -38,12 +38,12 @@ class Suggest
     File.open(CITIES_FILE) do |f|
       f.each_line do |line|
         city = Geoname.new(*line.chomp.split("\t"))
+        next if city.population.to_i < 5000 # Also eliminates header row
         city.lat, city.long = city.lat.to_f, city.long.to_f
         city.alt_name = city.alt_name.split(',')
         @cities << city
       end
     end
-    @cities.shift # Header row
   end
 
   # Suggest cities by length of matching portion of name
