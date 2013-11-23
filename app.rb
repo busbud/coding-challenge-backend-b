@@ -21,7 +21,7 @@ module Haversine
     EARTH_RADIUS * c
   end
 
-  MAX_DISTANCE = distance(-90, -180, 90, 180)
+  MAX_DISTANCE = distance(-90, -90, 90, 90)
 end
 
 class Suggest
