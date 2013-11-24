@@ -46,21 +46,23 @@ class Suggest
     end
   end
 
-  # Suggest cities by length of matching portion of name
+  # Suggest cities by length and position of matching portion of name
   def by_name(query)
     scores = Hash.new
     @cities.each do |city|
       # Try to match against each name of the city
-      match = [city.name, city.ascii, *city.alt_name].find do |name|
-        name.downcase.include? query.downcase
+      [city.name, city.ascii, *city.alt_name].find do |name|
+        if index = name.downcase.index(query.downcase)
+          scores[city] = query.length / name.length.to_f *
+                         (1 - index / name.length.to_f)
+        end
       end
-      scores[city] = query.length / match.length.to_f if match
     end
     scores
   end
 
-  # Suggest cities by length of matching portion of name and proximity to
-  # coordinates
+  # Suggest cities by length and position of matching portion of name and
+  # proximity to coordinates
   def by_name_and_coords(query, lat, long)
     scores = by_name(query)
     scores.each_key do |city|
