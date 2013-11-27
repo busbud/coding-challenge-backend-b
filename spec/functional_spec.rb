@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 describe 'GET /suggestions' do
@@ -36,7 +37,7 @@ describe 'GET /suggestions' do
 
     it 'contains a match' do
       names = response.json_body['suggestions'].map { |r| r['name'] }
-      expect(names.grep(/montreal/i)).to_not be_empty
+      expect(names.grep(/montr[eé]al/i)).to_not be_empty
     end
 
     it 'contains latitudes and longitudes' do
