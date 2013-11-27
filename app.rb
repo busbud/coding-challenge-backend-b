@@ -98,7 +98,8 @@ class Cities
     CSV.foreach(filename, options) do |row|
       # FIXME: For better results, use unidecode to transliterate names into
       # ASCII. This also means .find() needs to also decode the prefix.
-      @data[row["ascii"].downcase] = {
+      key = row["ascii"].downcase
+      (@data[key] ||= []) << {
         :name => _name(row),
         :latitude => Float(row["lat"]),
         :longitude => Float(row["long"]),
@@ -128,36 +129,38 @@ class Cities
 
   def suggest(prefix, lat=nil, lon=nil)
     suggestions = []
-    find(prefix).each_pair do |k, v|
-      score = 1.0
+    find(prefix).each_pair do |k, values|
+      values.each do |v|
+        score = 1.0
 
-      # Small penalty if the prefix and key don't match lengths. This should be
-      # faster than comparing exact strings. Strings closer to the prefix will
-      # be ranked higher.
-      #
-      # FIXME: The Levenshtein distance gives better results, but is slower.
-      # If the key is encoded in a different way, it will give better matches
-      # when used against the city name, though.
-      score *= 1 - 0.0001 * (k.length - prefix.length)
+        # Small penalty if the prefix and key don't match lengths. This should
+        # be faster than comparing exact strings. Strings closer to the prefix
+        # will be ranked higher.
+        #
+        # FIXME: The Levenshtein distance gives better results, but is slower.
+        # If the key is encoded in a different way, it will give better matches
+        # when used against the city name, though.
+        score *= 1 - 0.0001 * (k.length - prefix.length)
 
-      # Penalty for distance from suggested latitude and longitude, using a
-      # distance-decay function.
-      #
-      # FIXME: This only works for small distances, where we can pretend that
-      # the Earth is a plane. For larger distances, we need to use the
-      # great-circle distance, because the Earth is an ellipsoid. A useful
-      # example of this would be to consider the north pole: this score will
-      # return different results at various longitudes, even though it
-      # shouldn't.
-      if lat and lon
-        squared_distance = ((v[:latitude] - lat) ** 2 +
-                            (v[:longitude] - lon) ** 2)
-        score *= 1 / (squared_distance + 1)
+        # Penalty for distance from suggested latitude and longitude, using a
+        # distance-decay function.
+        #
+        # FIXME: This only works for small distances, where we can pretend that
+        # the Earth is a plane. For larger distances, we need to use the
+        # great-circle distance, because the Earth is an ellipsoid. A useful
+        # example of this would be to consider the north pole: this score will
+        # return different results at various longitudes, even though it
+        # shouldn't.
+        if lat and lon
+          squared_distance = ((v[:latitude] - lat) ** 2 +
+                              (v[:longitude] - lon) ** 2)
+          score *= 1 / (squared_distance + 1)
+        end
+
+        suggestions << v.merge({:latitude => v[:latitude].to_s,
+                                 :longitude => v[:longitude].to_s,
+                                 :score => score})
       end
-
-      suggestions << v.merge({:latitude => v[:latitude].to_s,
-                              :longitude => v[:longitude].to_s,
-                              :score => score})
     end
 
     suggestions.sort_by{|e| e[:score]}.reverse!
