@@ -100,8 +100,8 @@ class Cities
       # ASCII. This also means .find() needs to also decode the prefix.
       @data[row["ascii"].downcase] = {
         :name => _name(row),
-        :latitude => row["lat"],
-        :longitude => row["long"],
+        :latitude => Float(row["lat"]),
+        :longitude => Float(row["long"]),
       }
     end
   end
@@ -126,7 +126,7 @@ class Cities
     @data.select{|k, v| k.start_with?(prefix)}
   end
 
-  def suggest(prefix)
+  def suggest(prefix, lat=nil, lon=nil)
     suggestions = []
     find(prefix).each_pair do |k, v|
       score = 1.0
@@ -140,7 +140,24 @@ class Cities
       # when used against the city name, though.
       score *= 1 - 0.0001 * (k.length - prefix.length)
 
-      suggestions << v.merge({:score => score})
+      # Penalty for distance from suggested latitude and longitude, using a
+      # distance-decay function.
+      #
+      # FIXME: This only works for small distances, where we can pretend that
+      # the Earth is a plane. For larger distances, we need to use the
+      # great-circle distance, because the Earth is an ellipsoid. A useful
+      # example of this would be to consider the north pole: this score will
+      # return different results at various longitudes, even though it
+      # shouldn't.
+      if lat and lon
+        squared_distance = ((v[:latitude] - lat) ** 2 +
+                            (v[:longitude] - lon) ** 2)
+        score *= 1 / (squared_distance + 1)
+      end
+
+      suggestions << v.merge({:latitude => v[:latitude].to_s,
+                              :longitude => v[:longitude].to_s,
+                              :score => score})
     end
 
     suggestions.sort_by{|e| e[:score]}.reverse!
@@ -148,13 +165,70 @@ class Cities
 end
 
 
+class InvalidCoordinates < StandardError
+  attr_reader :errors
+
+  def initialize(errors)
+    @errors = errors
+  end
+end
+
+
 # http://www.sinatrarb.com/
 class App < Sinatra::Base
+
+  def sanitize_coordinates(lat, lon)
+    errors = {}
+
+    if lat
+      msg = "Invalid latitude: #{lat}"
+      begin
+        lat = Float(lat)
+        if lat < -90.0 or lat > 90.0
+          errors[:latitude] = msg
+        end
+      rescue ArgumentError => e
+        errors[:latitude] = msg
+      end
+    elsif lon
+      errors[:latitude] = "Missing latitude"
+    end
+
+    if lon
+      msg = "Invalid longitude: #{lon}"
+      begin
+        lon = Float(lon)
+        if lat < -180.0 or lat > 180.0
+          errors[:longitude] = msg
+        end
+      rescue ArgumentError => e
+        errors[:longitude] = msg
+      end
+    elsif lat
+      errors[:longitude] = "Missing longitude"
+    end
+
+    if not errors.empty?
+      raise InvalidCoordinates.new(errors)
+    end
+
+    [lat, lon]
+  end
+
   # Endpoints
   get '/suggestions' do
-    suggestions = @@cities.suggest(params["q"])
-    status 404 if suggestions.empty?
     content_type "application/json"
+
+    # Sanitize lat and lon
+    begin
+      lat, lon = sanitize_coordinates(params["latitude"], params["longitude"])
+    rescue InvalidCoordinates => e
+      status 400
+      return {:errors => e.errors}.to_json
+    end
+
+    suggestions = @@cities.suggest(params["q"], lat, lon)
+    status 404 if suggestions.empty?
     {:suggestions => suggestions}.to_json
   end
 

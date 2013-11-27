@@ -53,4 +53,19 @@ describe 'GET /suggestions' do
       end
     end
   end
+
+  describe 'with an invalid coordinate' do
+    subject(:response) do
+      get '/suggestions', {:q => 'Montreal', :latitude => 'invalid'}
+    end
+
+    it 'returns a 400' do
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns an array of suggestions' do
+      expect(response.json_body['errors']['latitude']).to_not be_nil
+      expect(response.json_body['errors']['longitude']).to_not be_nil
+    end
+  end
 end
