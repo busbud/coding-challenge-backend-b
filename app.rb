@@ -127,9 +127,20 @@ class Cities
   end
 
   def suggest(prefix)
-    suggestions = find(prefix).values.map do |e|
+    suggestions = []
+    find(prefix).each_pair do |k, v|
       score = 1.0
-      e.merge({:score => score})
+
+      # Small penalty if the prefix and key don't match lengths. This should be
+      # faster than comparing exact strings. Strings closer to the prefix will
+      # be ranked higher.
+      #
+      # FIXME: The Levenshtein distance gives better results, but is slower.
+      # If the key is encoded in a different way, it will give better matches
+      # when used against the city name, though.
+      score *= 1 - 0.0001 * (k.length - prefix.length)
+
+      suggestions << v.merge({:score => score})
     end
 
     suggestions.sort_by{|e| e[:score]}.reverse!
