@@ -38,6 +38,7 @@ class App < Sinatra::Base
   get '/suggestions' do
     suggestions = @@cities.suggest(params["q"])
     status 404 if suggestions.empty?
+    content_type "application/json"
     {:suggestions => suggestions}.to_json
   end
 

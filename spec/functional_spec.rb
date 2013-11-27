@@ -10,6 +10,10 @@ describe 'GET /suggestions' do
       expect(response.status).to eq(404)
     end
 
+    it 'is application/json' do
+      expect(response.headers['Content-Type']).to eq('application/json;charset=utf-8')
+    end
+
     it 'returns an empty array of suggestions' do
       expect(response.json_body['suggestions']).to be_a(Array)
       expect(response.json_body['suggestions']).to have(0).items
