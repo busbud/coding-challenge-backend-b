@@ -13,7 +13,5 @@ class City
   property :population , Integer
 end
 
-DataMapper.finalize
-DataMapper.auto_migrate!
 
 

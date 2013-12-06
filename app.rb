@@ -2,6 +2,8 @@ require 'sinatra/base'
 require 'json'
 
 # http://www.sinatrarb.com/
+# Configure Database
+# Configure Database
 class App < Sinatra::Base
   # Endpoints
   get '/suggestions' do
