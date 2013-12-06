@@ -11,6 +11,10 @@ class City
   property :latitude  , Float
   property :longitude , Float
   property :population , Integer
+
+  def self.extract(city_name = '')
+    City.all(:population.gte => 5000, :name.like => "#{city_name}%")
+  end
 end
 
 
