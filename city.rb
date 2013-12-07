@@ -29,8 +29,8 @@ class City
   end
 
   def self.distance(coord1, coord2)
-        Math.sqrt((coord2[0] - coord1[0]) ** 2 + 
-                  (coord2[1] - coord1[1]) ** 2)
+    Math.sqrt((coord2[0] - coord1[0]) ** 2 + 
+              (coord2[1] - coord1[1]) ** 2)
   end
 end
 
