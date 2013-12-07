@@ -16,18 +16,24 @@ EOF
     expect(first_line['lat']).to eq(49.05798)
     expect(first_line['long']).to eq(-122.25257)
     expect(first_line['population']).to eq(151683)
+    expect(first_line['country']).to eq('CA')
+    expect(first_line['admin1']).to eq('02')
   end
 
   it 'should import data to the city model' do
     data = {'name'       => 'Abbotsford',
             'lat'        => 49.05798,
             'long'       => -122.25257,
+            'country'    => 'CA',
+            'admin1'     => '02',
             'population' => 151683}
     city = GeonameParser.build_city data
 
     expect(city.name).to eq('Abbotsford')
     expect(city.latitude).to eq(49.05798)
     expect(city.longitude).to eq(-122.25257)
+    expect(city.country).to eq('CA')
+    expect(city.state).to eq('BC')
     expect(city.population).to eq(151683)
   end
 end

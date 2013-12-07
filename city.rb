@@ -8,6 +8,8 @@ class City
   property :name      , String
   property :latitude  , Float
   property :longitude , Float
+  property :country   , String
+  property :state     , String
   property :population , Integer
 
   def self.extract(city_name = '', coords = nil)
