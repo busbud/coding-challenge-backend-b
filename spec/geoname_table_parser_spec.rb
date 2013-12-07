@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require 'spec_helper'
 require_relative '../geoname_parser'
 
 describe GeonameParser do

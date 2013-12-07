@@ -1,5 +1,5 @@
 require 'csv'
-require_relative 'city'
+require 'city'
 
 class GeonameParser
   def self.parse(data)
