@@ -6,7 +6,7 @@ class City
   include DataMapper::Resource
 
   property :id        , Serial
-  property :name      , String
+  property :name      , String, :length => 255
   property :latitude  , Float
   property :longitude , Float
   property :country   , String
