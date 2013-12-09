@@ -51,5 +51,26 @@ describe City do
         expect(city.id).to be(expected_order[index].id)
       end
     end
+
+    it 'should return city in name alphabetic order when coord given' do
+      london_md = City.create( :name        => "Londontowne, MD, USA",
+                               :population  => 5000)
+
+      london_ont = City.create( :name       => "London, ON, Canada",
+                                :population => 5000)
+
+      london_oh = City.create(  :name       => "London, OH, USA",
+                                :population => 5000)
+
+      london_ky = City.create(  :name       => "London, KY, USA",
+                                :population => 5000)
+
+      cities = City.extract('London') 
+
+      expected_order = [london_md, london_ont, london_oh, london_ky]
+      cities.each_with_index do |city, index|
+        expect(city.id).to be(expected_order[index].id)
+      end
+    end
   end
 end
