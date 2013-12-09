@@ -1,5 +1,6 @@
 require 'data_mapper'
-require  'dm-migrations'
+require 'dm-migrations'
+require 'geo-distance'
 
 class City
   include DataMapper::Resource
@@ -29,8 +30,9 @@ class City
   end
 
   def self.distance(coord1, coord2)
-    Math.sqrt((coord2[0] - coord1[0]) ** 2 + 
-              (coord2[1] - coord1[1]) ** 2)
+    # in radians  
+    GeoDistance.distance( coord1[0], coord1[1], 
+                          coord2[0], coord2[1] )
   end
 end
 

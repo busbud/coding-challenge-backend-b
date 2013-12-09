@@ -6,6 +6,7 @@ gem 'rake'
 gem 'data_mapper'
 gem 'dm-postgres-adapter'
 gem 'dm-sqlite-adapter'
+gem 'geo-distance'
 
 group 'development' do
   gem 'rspec', '~>2.14.1'
