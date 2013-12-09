@@ -1,10 +1,14 @@
 ENV['RACK_ENV'] = 'test'
+require './config/environment'
 
 require 'rspec'
 require 'rack/test'
 require 'json'
 
-require_relative '../app'
+require 'pry'
+require 'pry-nav'
+
+require 'app'
 
 # Add an #app method for Rack::Test
 module TestHelpers
@@ -24,7 +28,6 @@ end
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
-  config.filter_run :focus
   config.order = 'random'
 
   config.expect_with(:rspec) { |c| c.syntax = :expect }

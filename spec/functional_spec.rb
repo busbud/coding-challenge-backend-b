@@ -18,6 +18,7 @@ describe 'GET /suggestions' do
 
   describe 'with a valid city' do
     subject(:response) do
+      City.create(:name => 'Montreal', :population => 5000)
       get '/suggestions', {:q => 'Montreal'}
     end
 
