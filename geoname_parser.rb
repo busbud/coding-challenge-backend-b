@@ -21,7 +21,7 @@ class GeonameParser
     lines.shift
     lines.map do |line|
       records = line.split("\t")
-      {'name'       => records[1],
+      {'name'       => records[2],
        'lat'        => Float(records[4]),
        'long'       => Float(records[5]),
        'country'    => records[8],
