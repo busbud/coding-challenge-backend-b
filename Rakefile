@@ -1,9 +1,11 @@
 require './config/environment'
 
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec)
+if RACK_ENV == 'test'
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec)
 
-task :default => :spec
+  task :default => :spec
+end
 
 namespace :db do
   namespace :schema do
