@@ -12,7 +12,7 @@ describe City do
       expect(City.extract('Toronto').count).to be(0)
     end
 
-    it 'should fetch a city that have more that 5000 population' do
+    it 'should fetch a city that has 5000 population and more' do
       City.create(:population => 5000, :name => 'Toronto')
       expect(City.extract('Toronto').count).to be(1)
     end
@@ -24,19 +24,19 @@ describe City do
 
     it 'should return the matching cities in the order of distance from the required coordinate' do
       coord = {:latitude => 43.70011, :longitude => -79.4163}
-      london_md = City.create( :name      => "Londontowne, MD, USA",
-                               :latitude  => 38.93345,
-                               :longitude => -76.54941,
+      london_md = City.create( :name       => "Londontowne, MD, USA",
+                               :latitude   => 38.93345,
+                               :longitude  => -76.54941,
                                :population => 5000)
 
-      london_ont = City.create(:name      => "London, ON, Canada",
-                               :latitude  => 42.98339,
-                               :longitude => -81.23304,
+      london_ont = City.create(:name       => "London, ON, Canada",
+                               :latitude   => 42.98339,
+                               :longitude  => -81.23304,
                                :population => 5000)
-                               
-      london_oh = City.create( :name      => "London, OH, USA",
-                               :latitude  => 39.88645,
-                               :longitude => -83.44825,
+
+      london_oh = City.create( :name       => "London, OH, USA",
+                               :latitude   => 39.88645,
+                               :longitude  => -83.44825,
                                :population => 5000)
 
       london_ky = City.create(  :name      => "London, KY, USA",
