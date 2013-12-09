@@ -1,8 +1,8 @@
 require 'bundler'
 Bundler.setup
 
-APP_ROOT=File.expand_path("../", File.dirname(File.join(__FILE__)))
-RACK_ENV=ENV['RACK_ENV'] || "development";
+APP_ROOT = File.expand_path("../", File.dirname(File.join(__FILE__)))
+RACK_ENV = ENV['RACK_ENV'] || "development";
 
 $LOAD_PATH.unshift(APP_ROOT)
 
