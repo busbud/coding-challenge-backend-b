@@ -5,10 +5,10 @@ gem 'thin', '~>1.6.1'
 gem 'rake'
 gem 'data_mapper'
 gem 'dm-postgres-adapter'
-gem 'dm-sqlite-adapter'
 gem 'geo-distance'
 
 group 'development' do
+  gem 'dm-sqlite-adapter'
   gem 'rspec', '~>2.14.1'
   gem 'rack-test', '~>0.6.2'
   gem 'pry'
