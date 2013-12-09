@@ -13,8 +13,17 @@ class City
   property :state     , String
   property :population , Integer
 
+  attr_accessor :score
+
   def self.extract(city_name = '', coords = nil)
     cities = big_city.all(:name.like => "#{city_name}%")
+    sorted_cities = sort_cities(cities, coords)
+    sorted_cities.each_with_index do |city, index|
+      city.score = 1 - index.to_f / cities.count  
+    end
+  end
+
+  def self.sort_cities(cities, coords = nil)
     if coords
       cities.sort_by do |city|
         distance([city.latitude, city.longitude],
@@ -34,7 +43,11 @@ class City
     GeoDistance.distance( coord1[0], coord1[1], 
                           coord2[0], coord2[1] )
   end
+
+  def json_attrs
+    { :name      => "#{self.name}, #{self.state}, #{self.country}",
+      :latitude  => self.latitude.to_f,
+      :longitude => self.latitude.to_f,
+      :score     => self.score}
+  end
 end
-
-
-
