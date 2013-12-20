@@ -2,7 +2,6 @@ require './repository.rb'
 
 class AutocompleteService
 
-	@repository
 
 	def initialize
 		@repository = Repository.new
@@ -10,10 +9,11 @@ class AutocompleteService
 
 	def getSuggestions(options={})
 
-		if options[:keyword].empty?
+
+		if  options[:keyword].nil? || options[:keyword].empty?
 			return []		
 		else
-			suggestions = @repository.getSuggestionsWithParams(options[:keyword])
+			suggestions = @repository.getSuggestionsWithParams(options)
 			suggestions.size>0? updatedSuggestions = updateScores(suggestions,options[:keyword]) : updatedSuggestions =[];
 			return formatSuggestions(updatedSuggestions)
 		end

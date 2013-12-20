@@ -9,10 +9,9 @@ class App < Sinatra::Base
   autocompleteService = AutocompleteService.new
 
   get '/suggestions' do
-
   	params = request.params
 
-  	suggestedCities =[]
+
   	suggestedCities = autocompleteService.getSuggestions({
   		:keyword => params['q'],
   		:latitude => params['latitude'],

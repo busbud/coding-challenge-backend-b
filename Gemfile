@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'sinatra', '~>1.4.4'
 gem 'thin', '~>1.6.1'
+gem "geo-distance", "~> 0.2.0"
 
 group 'development' do
   gem 'rspec', '~>2.14.1'
