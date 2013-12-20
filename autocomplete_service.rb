@@ -8,13 +8,13 @@ class AutocompleteService
 		@repository = Repository.new
 	end
 
-	def getSuggestions(keyword)
+	def getSuggestions(options={})
 
-		if keyword.empty?
+		if options[:keyword].empty?
 			return []		
 		else
-			suggestions = @repository.getSuggestionsWithParams(keyword)
-			suggestions.size>0? updatedSuggestions = updateScores(suggestions,keyword) : updatedSuggestions =[];
+			suggestions = @repository.getSuggestionsWithParams(options[:keyword])
+			suggestions.size>0? updatedSuggestions = updateScores(suggestions,options[:keyword]) : updatedSuggestions =[];
 			return formatSuggestions(updatedSuggestions)
 		end
 	end

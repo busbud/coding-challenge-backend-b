@@ -13,7 +13,11 @@ class App < Sinatra::Base
   	params = request.params
 
   	suggestedCities =[]
-  	suggestedCities = autocompleteService.getSuggestions(params['q'])
+  	suggestedCities = autocompleteService.getSuggestions({
+  		:keyword => params['q'],
+  		:latitude => params['latitude'],
+  		:longitude => params['longitude'] 
+  		})
 
    	if (suggestedCities.size > 0)
   		 status 200
