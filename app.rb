@@ -1,12 +1,29 @@
 require 'sinatra/base'
 require 'json'
+require './autocomplete_service.rb'
 
 # http://www.sinatrarb.com/
 class App < Sinatra::Base
   # Endpoints
-  #test initial commit
+
+  autocompleteService = AutocompleteService.new
+
   get '/suggestions' do
-    status 404
-    {:suggestions => []}.to_json
+
+  	params = request.params
+
+  	suggestedCities=[]
+  	if !params['q'].empty?
+  		suggestedCities= autocompleteService.getSuggestions(params['q'])
+  	end
+  	
+   	if suggestedCities.size > 0
+  		 status 200
+  		 {:suggestions => suggestedCities}.to_json
+  	else
+  		status 404
+  		{:suggestions => []}.to_json
+  	end
+  	
   end
 end
