@@ -14,7 +14,7 @@ class Repository
 	def getSuggestionsWithParams(keyword)
 		matchingCities=[]
 		@data.each do |city|
-			if city[:name].to_s.downcase.include? keyword
+			if city[:name].to_s.downcase.include? keyword.downcase
 				if city[:population].to_i > 10000
 				matchingCities << city
 				end

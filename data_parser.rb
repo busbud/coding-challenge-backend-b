@@ -14,10 +14,11 @@ class DataParser
 			:name => splittedRow[2],
 			:latitude => splittedRow[4],
 			:longitude => splittedRow[5],
+			:country => splittedRow[8],
+			:state => splittedRow[10],
 			:population => splittedRow[14],
 			:score => 1
 		} 
-
 		end
 		return tableCities
 	end
