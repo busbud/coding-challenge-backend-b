@@ -38,6 +38,7 @@ module DataParser
 			when 11 then 'SK'
 			when 12 then 'YT'
 			when 13 then 'NT'
+			when 14 then 'NU'
 		end	
 	end
 end

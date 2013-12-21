@@ -6,7 +6,7 @@ require './autocomplete_service.rb'
 class App < Sinatra::Base
   # Endpoints
 
-  # Instancié ici pour être appeler dès le lancement du serveur. Le repository ira donc immédiatement chercher les données dans le fichier.tsv
+  # Instancié ici pour être appelé dès le lancement du serveur. Le repository ira donc immédiatement chercher les données dans le fichier.tsv
   autocompleteService = AutocompleteService.new
 
   get '/suggestions' do

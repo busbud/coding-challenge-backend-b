@@ -33,6 +33,7 @@ class AutocompleteService
 		return formatedSuggestions.sort_by{ |city| -city[:score].to_f }
 	end
 
+
 	def addScores(cities,params={})
 		citiesSortedByPopulation = cities.sort_by { |city| city[:population].to_i }
 		citiesSortedByDistance = cities.sort_by { |city| city[:distanceFromPosition].to_i }
