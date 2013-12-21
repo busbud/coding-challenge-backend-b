@@ -11,20 +11,14 @@ class App < Sinatra::Base
   get '/suggestions' do
   	params = request.params
 
-
   	suggestedCities = autocompleteService.getSuggestions({
   		:keyword => params['q'],
   		:latitude => params['latitude'],
   		:longitude => params['longitude'] 
   		})
 
-   	if (suggestedCities.size > 0)
-  		 status 200
-  		 {:suggestions => suggestedCities}.to_json
-  	else
-  		status 404
-  		{:suggestions => []}.to_json
-  	end
+	suggestedCities.size>0 ? (status 200) : (status 404)
+  	{:suggestions => suggestedCities}.to_json
 
   end
 end

@@ -1,6 +1,6 @@
-class DataParser
+module DataParser
 
-	def getDataFromFile
+	def self.getDataFromFile
 
 		file = File.open("data/cities_canada-usa.tsv","rb")
 		rawData = file.read
@@ -25,7 +25,7 @@ class DataParser
 		return tableCities
 	end
 
-	def getProvince(provinceIndex)
+	def self.getProvince(provinceIndex)
 		province = case provinceIndex.to_i	
 			when 1 then 'AB'
 			when 2 then 'BC'
