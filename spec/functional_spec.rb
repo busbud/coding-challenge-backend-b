@@ -48,4 +48,24 @@ describe 'GET /suggestions' do
       end
     end
   end
+
+  describe 'with a valid city and limited number of values' do
+    subject(:response) do
+      get '/suggestions', {:q => 'T', :limit => '5'}
+    end
+
+    it 'get the right number of value' do
+      expect(response.json_body['suggestions']).to have(5).items
+    end
+  end
+
+  describe 'with a valid city and limited number of values' do
+    subject(:response) do
+      get '/suggestions', {:q => 'Toronto', :limit => '5'}
+    end
+
+    it 'get less value than limit if less suggestions' do
+      expect(response.json_body['suggestions']).to have_at_most(5).items
+    end
+  end
 end

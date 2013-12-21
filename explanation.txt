@@ -1,0 +1,20 @@
+Architecture:
+
+Malgré le fait que le nombre de fonctionnalités est relativement faible, j'ai préféré diviser mon système en un Service, qui utilise un Repository, qui utilise un Parser. J'ai fait ainsi, car je voulais limiter à leurs propres taches chacune des classes(ou module). Ainsi, data_parser va chercher les informations dans le fichier tsv. L'avantage pour le Repository d'utiliser le data_parser et que on peu brancher un autre parser sur d'autre donnée et le fonctionnement reste le même (à condition que le parser respecte les mêmes paramètres). On pourrait également se brancher sur une BD éventuellement. Le Service permet de garder "propre" le end point de la classe Apps. Finalement, le service expose seulement les taches qu'il offre. Je crois que le calcul de l'algorithme pourrait être isolé du service pour respecté les bonnes "pratique", mais je trouvais que sa commencés à faire beaucoup de class/modules avec peu de stock.
+
+Algo:
+
+En gros, l'algorithme donne un poids à différent paramètre selon la situation. Les paramètres sont la relevency, la distance et la population.
+
+Relevency: Le nombre de lettres du keyword sur le nombre total de lettres du nom de la suggestion
+
+Distance: L'index de la suggestion(dans une liste des suggestions triée selon leur distance) sur le nombre total de suggestions. Donc, la ville la plus près donne 1 et la ville la plus loin 1/n.
+
+Population: même principe que pour distance, mais avec une liste de population. Les plus grosses sont donc avantagées, car, par probabilité, plus de chance d'être cherché.
+
+L'algorithme peut être ajusté en fonction de se sur quoi on désire mettre de l'important. Dans mon cas, j'accorde moin d'importance à la distance et plus à la relevency et population. Comme c'est un autocomplete, je voulais que ça me suggère des villes à l'ortographe près de ce que j'écris.
+
+Ajout du paramètre 'limit':
+
+J'ai décidé d'ajouter la fonctionnalité qui permet de limiter le nombre de choix retourné. Ainsi si "/suggestions?q=to?limit=10" est appelé, nous n'aurons que les 10 meilleures suggestions (ou moin si nombre de suggestions inférieur à la limite).
+
