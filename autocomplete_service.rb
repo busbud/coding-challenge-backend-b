@@ -7,7 +7,7 @@ class AutocompleteService
 	end
 
 	def getSuggestions(params={})
-		!(params[:limit].nil? ||params[:limit].empty?)? (limit=params[:limit].to_i) : (limit=10000)
+		!(params[:limit].nil? || params[:limit].empty?)? (limit=params[:limit].to_i) : (limit=10000)
 
 		if  params[:keyword].nil? || params[:keyword].empty?
 			return []		
@@ -33,7 +33,7 @@ class AutocompleteService
 		return formatedSuggestions.sort_by{ |city| -city[:score].to_f }
 	end
 
-
+	#Calcul algorithme et ajoute le score a chaque ville
 	def addScores(cities,params={})
 		citiesSortedByPopulation = cities.sort_by { |city| city[:population].to_i }
 		citiesSortedByDistance = cities.sort_by { |city| city[:distanceFromPosition].to_i }
