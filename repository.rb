@@ -7,7 +7,6 @@ class Repository
 	def initialize
 		#Initialise le repository ,permet d'importer de autre chose si on veux. 
 		@data=DataParser.getDataFromFile
-
 	end
 
 	def getSuggestionsWithParams(params={})	

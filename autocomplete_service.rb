@@ -7,12 +7,14 @@ class AutocompleteService
 	end
 
 	def getSuggestions(options={})
+		!(options[:limit].nil? ||options[:limit].empty?)? (limit=options[:limit].to_i) : (limit=10000)
+
 		if  options[:keyword].nil? || options[:keyword].empty?
 			return []		
 		else
 			suggestions = @repository.getSuggestionsWithParams(options)
 			suggestions.size>0? updatedSuggestions = addScores(suggestions,options) : updatedSuggestions =[];
-			return formatSuggestions(updatedSuggestions)
+			return formatSuggestions(updatedSuggestions).first(limit)
 		end
 	end
 
@@ -53,9 +55,8 @@ class AutocompleteService
 	def chooseEquation(value,method)
 		score = case method
 			when 1 then (0.6*value[:ptsForRelevency].to_f + 0.1*value[:ptsForDistance].to_f + 0.3*value[:ptsForPopulation].to_f)
-			when 2 then (0.5*value[:ptsForRelevency].to_f + 0.5*value[:ptsForPopulation].to_f)
+			when 2 then (0.6*value[:ptsForRelevency].to_f + 0.4*value[:ptsForPopulation].to_f)
 		end
 	end
-
 
 end
