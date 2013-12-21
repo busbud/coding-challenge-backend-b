@@ -1,11 +1,10 @@
 module DataParser
 
 	def self.getDataFromFile
+		tableCities=[]
 
 		file = File.open("data/cities_canada-usa.tsv","rb")
-		rawData = file.read
-		tableCities=[]
-		data = rawData.split("\n")
+		data = file.read.split("\n")
 
 		data.map do |row|
 			splittedRow=row.split("\t")

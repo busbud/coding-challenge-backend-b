@@ -6,14 +6,14 @@ class AutocompleteService
 		@repository = Repository.new
 	end
 
-	def getSuggestions(options={})
-		!(options[:limit].nil? ||options[:limit].empty?)? (limit=options[:limit].to_i) : (limit=10000)
+	def getSuggestions(params={})
+		!(params[:limit].nil? ||params[:limit].empty?)? (limit=params[:limit].to_i) : (limit=10000)
 
-		if  options[:keyword].nil? || options[:keyword].empty?
+		if  params[:keyword].nil? || params[:keyword].empty?
 			return []		
 		else
-			suggestions = @repository.getSuggestionsWithParams(options)
-			suggestions.size>0? updatedSuggestions = addScores(suggestions,options) : updatedSuggestions =[];
+			suggestions = @repository.getSuggestionsWithParams(params)
+			suggestions.size>0? updatedSuggestions = addScores(suggestions,params) : updatedSuggestions =[];
 			return formatSuggestions(updatedSuggestions).first(limit)
 		end
 	end
@@ -33,7 +33,7 @@ class AutocompleteService
 		return formatedSuggestions.sort_by{ |city| -city[:score].to_f }
 	end
 
-	def addScores(cities,options={})
+	def addScores(cities,params={})
 		citiesSortedByPopulation = cities.sort_by { |city| city[:population].to_i }
 		citiesSortedByDistance = cities.sort_by { |city| city[:distanceFromPosition].to_i }
 
@@ -41,11 +41,11 @@ class AutocompleteService
 			value=[]
 			value = {
 				:ptsForPopulation => (((citiesSortedByPopulation.index{|x| x[:id]==city[:id]})+1).to_f / citiesSortedByPopulation.size.to_f),
-				:ptsForRelevency => (options[:keyword].length.to_f / city[:name].length.to_f),
+				:ptsForRelevency => (params[:keyword].length.to_f / city[:name].length.to_f),
 				:ptsForDistance => (((citiesSortedByDistance.index{|x| x[:id]==city[:id]})+1).to_f / citiesSortedByDistance.size.to_f)
 			}
 
-			!(options[:latitude].nil? || options[:longitude].nil? || options[:latitude].to_s.empty? || options[:longitude].to_s.empty?)?
+			!(params[:latitude].nil? || params[:longitude].nil? || params[:latitude].to_s.empty? || params[:longitude].to_s.empty?)?
 				(city[:score]=chooseEquation(value,1).round(1)) : (city[:score]=chooseEquation(value,2).round(1))
 		end 
 		return cities
