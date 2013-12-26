@@ -4,6 +4,7 @@ GEM
     daemons (1.1.9)
     diff-lcs (1.2.4)
     eventmachine (1.0.3)
+    eventmachine (1.0.3-x86-mingw32)
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
@@ -29,6 +30,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   rack-test (~> 0.6.2)

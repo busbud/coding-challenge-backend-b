@@ -28,14 +28,30 @@ class App < Sinatra::Base
     }
   end
 
+# Definition of earth radius for distance calculations  
+  def earthRadius
+    6368
+  end
+
+# Distance between two localisation  
+  def geo_distance(latA, latB, longA, longB)
+    result = earthRadius*Math.acos(
+                            Math.sin(latA*Math::PI/180)*Math.sin(latB*Math::PI/180) + 
+                            Math.cos(latA*Math::PI/180)*Math.cos(latB*Math::PI/180) *
+                            Math.cos(longA*Math::PI/180-longB*Math::PI/180)
+                            )
+    return result
+  end
+
+# City structure
   JSONCity = Struct.new(:name, :latitude, :longitude, :score)
-  
+
+# Data extraction from the CSV file 
   geonamesFile = File.join(File.dirname(__FILE__), "data", "cities_canada-usa.tsv")
   fileOptions = {:col_sep => "\t", :quote_char => "\0", :headers => true, :converters => :numeric}
   
   $bigCities = Array.new
   
-  # Data extraction from the CSV file 
   CSV.foreach(geonamesFile, fileOptions) do |cityRow|
     if cityRow['population'] >= 5000 then
       $bigCities.push(cityRow)
@@ -69,12 +85,11 @@ class App < Sinatra::Base
 
   # Variables initialization
     @citiesMatching = Array.new   
-    earthRadius = 6368
-
+    
   # Loop on cities which population is over 5000
     $bigCities.each { |cityRow|
       
-      if cityRow['name'].start_with? query then
+      if cityRow['ascii'].downcase.start_with? query.downcase.tr("àâçèéêîôùû", "aaceeeiouu") then
         
       # State translation from number to real name if it's a Canadian city
         if cityRow['country'].eql? "CA" then
@@ -83,21 +98,22 @@ class App < Sinatra::Base
             cityState = cityRow['admin1']
         end
              
-        cityName = "#{cityRow['name']}, #{cityState}, #{cityRow['country']}"
+        cityName = "#{cityRow['ascii']}, #{cityState}, #{cityRow['country']}"
         cityLat = Float(cityRow['lat'])
         cityLong = Float(cityRow['long'])
-
-      # Scoring algorithm (involving distance, name and population)             
-        lengthDifference = cityRow['name'].length - query.length  
+        cityPop = cityRow['population']
+        
+      # Scoring algorithm              
+        lengthCarac = Float(query.length)/cityRow['name'].length
+        populationCarac = 1 - 5000.0/cityPop
+         
         if latitude && longitude then
-          distance = earthRadius*Math.acos(Math.sin(latitude*Math::PI/180)*Math.sin(cityLat*Math::PI/180) + 
-                                  Math.cos(latitude*Math::PI/180)*Math.cos(cityLat*Math::PI/180)*Math.cos(longitude*Math::PI/180-cityLong*Math::PI/180)) 
-          cityScore = [1 - (distance/3000+0.005) - lengthDifference*0.02, 0].max.round(2)
+          distanceCarac = 1 - geo_distance(latitude, cityLat, longitude, cityLong) / (Math::PI*earthRadius)
+          cityScore = ((lengthCarac+distanceCarac+populationCarac)/3.0).round(2)
         else
-          distance = 500.0/cityRow['population']
-          cityScore = [1 - (distance+0.005) - lengthDifference*0.02, 0].max.round(2)
-        end          
-
+          cityScore = ((lengthCarac+populationCarac)/2.0).round(2)
+        end  
+          
       # Results structure
         city = JSONCity.new(cityName, cityLat, cityLong, cityScore) 
         @citiesMatching.push(city)
@@ -112,7 +128,11 @@ class App < Sinatra::Base
     puts "Execution time : #{(end_time-beginning_time)} seconds"
  
   # Return JSON result    
-    status 404
+    if @citiesMatching.empty? then 
+      status 404
+    else
+      status 200
+    end
     {:suggestions => @citiesMatching.map{|c| Hash[c.each_pair.to_a]}}.to_json
   end
 
