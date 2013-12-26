@@ -73,14 +73,15 @@ class App < Sinatra::Base
     beginning_time = Time.now
    
   # Checking parameters 
-    query, latitude, longitude = params[:q], params[:latitude], params[:longitude]
+    query, latitude, longitude, limit = params[:q], params[:latitude], params[:longitude], params[:limit]
     query.gsub! '%20', ' '
     halt 410, "Query is missing !" unless query
     begin
       latitude = Float(latitude) if latitude
       longitude = Float(longitude) if longitude
+      limit = Integer(limit) if limit
     rescue
-      halt 420, "Latitude and/or longitude is invalid !"
+      halt 420, "Latitude, longitude or limit is invalid !"
     end 
 
   # Variables initialization
@@ -121,8 +122,13 @@ class App < Sinatra::Base
       end
     }
      
-  # Sorting results array   
-    @citiesMatching.sort! { |a,b| b.score <=> a.score }
+  # Sorting results array by score and alphabetical order (if score is equal)  
+    @citiesMatching.sort! { |a,b| [b.score, a.name] <=> [a.score, b.name] }
+  
+  # Considering the first 'limit' results if limit is given as a parameter  
+    if limit then
+      @citiesMatching = @citiesMatching.first(limit)
+    end
       
     end_time = Time.now
     puts "Execution time : #{(end_time-beginning_time)} seconds"
