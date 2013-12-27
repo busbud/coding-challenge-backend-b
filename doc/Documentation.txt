@@ -43,7 +43,8 @@ The scoring algorithm parses the array containing all the cities and considers t
 The distance score considers earth like a sphere (not exactly the case but precise enough) and the maximum distance being the distance between two points on exact opposites of the sphere.
 
 The population score changes between 0 (5000 pop) to nearly 1 (very large population). This score is made because we expect people to search for big cities rather than searching for small ones.
-The score is rounded to two decimals.
+
+The score is rounded to two decimals. All the scores are absolute and does not depend on the current number of cities returned. It could have been a possibility but I think it would increase score differences and then possibly mislead the algorithm.
 
 Matching cities are sorted by score (greater before) and alphabetical order if the score is equal.
 
