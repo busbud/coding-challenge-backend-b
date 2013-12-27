@@ -69,19 +69,17 @@ class App < Sinatra::Base
   get '/suggestions' do
     
     content_type 'application/json', :charset => 'utf-8'
-    
-    beginning_time = Time.now
    
   # Checking parameters 
     query, latitude, longitude, limit = params[:q], params[:latitude], params[:longitude], params[:limit]
     query.gsub! '%20', ' '
-    halt 410, "Query is missing !" unless query
+    halt 404, "Query is missing !" unless query
     begin
       latitude = Float(latitude) if latitude
       longitude = Float(longitude) if longitude
       limit = Integer(limit) if limit
     rescue
-      halt 420, "Latitude, longitude or limit is invalid !"
+      halt 404, "Latitude, longitude or limit is invalid !"
     end 
 
   # Variables initialization
@@ -129,9 +127,6 @@ class App < Sinatra::Base
     if limit then
       @citiesMatching = @citiesMatching.first(limit)
     end
-      
-    end_time = Time.now
-    puts "Execution time : #{(end_time-beginning_time)} seconds"
  
   # Return JSON result    
     if @citiesMatching.empty? then 

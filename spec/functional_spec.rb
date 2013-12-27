@@ -48,4 +48,15 @@ describe 'GET /suggestions' do
       end
     end
   end
+  
+  describe 'with a valid query and a valid limit' do
+    subject(:response) do
+      get '/suggestions', {:q => 'London', :limit => 3}
+    end
+    
+    it 'has a limited number of items' do
+        expect(response.json_body['suggestions']).to have_at_most(3).items
+    end
+  end
+
 end

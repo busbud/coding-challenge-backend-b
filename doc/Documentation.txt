@@ -3,13 +3,14 @@ Busbud coding challenge : Documentation
 
 I – Development environment
 
-Application has been developed with Ruby 2.0.0 and Sinatra. Tests had been proceeded over a local Thin server and the final application is now deployed on Heroku : (NOT DEPLOYED ALREADY)
+Application has been developed with Ruby 2.0.0 and Sinatra. Tests had been proceeded over a local Thin server and the final application is now deployed on Heroku : http://guarded-refuge-1622.herokuapp.com/
 
+Since the application does not contain many functionalities, I prefered to centralize its code on a single class. I could separate it in different classes (one for parsing, one for scoring and one to organize for example) but I tought that it would be complicating the principle of this application. However, the code is commented and each functionnality is being clearly noticed so if this application is willing to expand its possibilities, we could easily implement new classes.
 
 II – Data extraction
 
 Cities extraction from the CSV table is a heavy operation that spend a lot of execution time. Auto-completion is a tool needing to be as fast as possible because it concerns user interaction with the machine. The analysis showed that searching in the CSV cost around 1.3 seconds on the local machine and we can’t afford to have an auto-completion lasting more than 1 second.
-The goal was to reduce this execution time by parsing the CSV file only once, when the server loads, and then store it in a global variable. It surely takes more resources but the gain on user experience is clearly worth it.
+The goal was to reduce this execution time by parsing the CSV file only once, when the server loads, and then store it in a global variable. It surely takes more resources but the gain on user experience is clearly worth it. Finally, responding to a request only last around 30ms allowing to answer to more than 30 requests (users) by second with a single Heroku dyno.
 
 The cities which population is under 5000 are not considered during the parsing. It means that not all the cities are stored in a variable but only the interesting ones. This helps in saving some resources.
 
