@@ -1,0 +1,129 @@
+require 'trollop'
+require 'json'
+
+class City
+# constructor method
+def initialize(city,state, country,lat1, lon1)
+@city, @state, @country, @lat1, @lon1, @score = city,state, country,latitude, longitude
+end
+# accessor methods
+def getCity
+@city
+end
+def getState
+@state
+end
+def getCountry
+@country, 
+end
+def geLat1
+@lat1
+end
+def getLon1
+@lon1
+end
+
+
+
+
+# setter methods
+
+
+
+
+
+def setCity=(value)
+@city= value
+end
+def setState=(value)
+@state= value
+end
+def setCountry=(value)
+@country= value
+end
+def geLat1=(value)
+@lat1= value
+end
+def setLon1=(value)
+@lon1= value
+end
+
+
+
+
+
+opts = Trollop::options do
+  opt :output, "Output file", :type => String
+  opt :input, "Input file", :type => String
+  opt :ss, "city to search", :type => String
+  opt :lat2, "latitude (optional)", :type => float
+  opt :lon2, "Longitude (optional)", :type => float
+end
+
+f = File.open(opts.input)
+a=[][5]
+  f.each_line {|line|
+    a.push line}
+a[] << line.split(",")
+ end
+
+for i in 0..a.length
+if (opts.ss)==a[i][0]
+setCity=#{a[i][0]}
+setState=#{a[i][1]}
+setCountry=#{a[i][2]}
+setLat1=#{a[i][3]}
+setLon1=#{a[i][3]}
+
+
+else
+   puts "No Suggestion Available"
+end
+
+
+
+def scoreCalc(lat1,lat2,lon1,lon2)
+distance= Math.acos(Math.sin(lat1)*Math.sin(lat2)+Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1))
+
+case distance
+when 0..1
+  return score=0.9
+when 1.1..1.5
+  return score=0.8
+when 1.6..2.0
+  return score=0.7
+when 2.1..2.5
+  return score=0.6
+when 2.6..3.0
+  return score=0.5
+when 3.1..3.5
+  return score=0.4
+when 3.6..4.0
+  return score=0.3
+when 4.1..4.5
+  return score=0.2
+when 4.6..5.0
+  return score=0.1
+else
+  return score=0.0
+end
+
+suggestion= {
+    "name" => "#{getCity}, #{getState}, #{getCountry}",
+    "latitude" => "#{getLat1}"
+    "longitude" => "#{getLon1}",
+    "score" => "#{score}"
+}
+
+
+File.open(opts.output,"w") do |f|
+  f.write(suggestion.to_json)
+
+
+
+end
+
+end
+
+
+
