@@ -20,7 +20,8 @@ class Suggestion
       {
         :name      => city.complete_name,
         :latitude  => city.latitude,
-        :longitude => city.longitude
+        :longitude => city.longitude,
+        :score     => score_for(city)
       }
     end
 
@@ -51,4 +52,14 @@ class Suggestion
     return true if latitude && longitude.nil?
     return true if longitude && latitude.nil?
   end
+
+  def score_for(city)
+    score_by_length_for(city)
+
+  end
+
+  def score_by_length_for(city)
+    Float(q.length) / city.ascii.length
+  end
+
 end

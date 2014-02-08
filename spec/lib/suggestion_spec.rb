@@ -127,4 +127,13 @@ describe Suggestion do
     end
   end
 
+  describe '#score_by_length_for' do
+    before { suggestion.stub(:q).and_return("london") }
+
+    subject { suggestion.send(:score_by_length_for, city) }
+
+    it "should return max score" do
+      expect(subject).to eql(1.0)
+    end
+  end
 end
