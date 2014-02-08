@@ -24,7 +24,11 @@ class ParseDatas
     }
   }.freeze
 
-  City = Struct.new(:name, :ascii, :latitude, :longitude, :population, :country, :state)
+  City = Struct.new(:name, :ascii, :latitude, :longitude, :population, :country, :state) do
+    def complete_name
+      "#{name}, #{state}, #{country}"
+    end
+  end
 
   def self.get_datas_from_csv(file)
     csv_params = {:col_sep => "\t", :quote_char => "\0", :headers => true, :converters => :numeric}
