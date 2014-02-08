@@ -9,6 +9,8 @@ gem 'i18n', '~> 0.6.9'
 
 gem 'geocoder', '~> 1.1.9'
 
+gem 'redis'   , '~> 3.0.7'
+
 group 'development' do
   gem 'rspec', '~>2.14.1'
   gem 'rack-test', '~>0.6.2'
