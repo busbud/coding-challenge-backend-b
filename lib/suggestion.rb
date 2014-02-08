@@ -25,7 +25,7 @@ class Suggestion
       }
     end
 
-    results.sort_by{ |x| x[:name] }
+    results.sort_by{ |x| [-x[:score], x[:name]] }
   end
 
   def errors
