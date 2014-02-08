@@ -136,4 +136,25 @@ describe Suggestion do
       expect(subject).to eql(1.0)
     end
   end
+
+  describe '#score_by_population_for' do
+    before { city.stub(:population => 5000) }
+
+    subject { suggestion.send(:score_by_population_for, city) }
+
+    it "should return score eql 0" do
+      expect(subject).to eql(0.0)
+    end
+  end
+
+  describe '#calculate_score_with' do
+    let(:scores) { [1,1,1] }
+    before { suggestion.stub(:population => 5000) }
+
+    subject { suggestion.send(:calculate_score_with, scores) }
+
+    it "should return score eql 0" do
+      expect(subject).to eql(1.0)
+    end
+  end
 end

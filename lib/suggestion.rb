@@ -54,12 +54,21 @@ class Suggestion
   end
 
   def score_for(city)
-    score_by_length_for(city)
+    scores = [score_by_length_for(city)]
+    scores << score_by_population_for(city)
 
+    calculate_score_with(scores)
   end
 
   def score_by_length_for(city)
     Float(q.length) / city.ascii.length
   end
 
+  def score_by_population_for(city)
+    1 - Float(ParseDatas::MAX_POPULATIONS)/city.population
+  end
+
+  def calculate_score_with(scores)
+    (scores.inject(:+) / scores.length).round(1)
+  end
 end
