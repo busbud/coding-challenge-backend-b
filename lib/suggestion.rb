@@ -48,14 +48,19 @@ class Suggestion
     cities.select{ |city| city.ascii.match(/^#{query_parameterize}/i) }
   end
 
+  def lat_long_present?
+    latitude && longitude
+  end
+
   def lat_or_long_missing?
-    return true if latitude && longitude.nil?
-    return true if longitude && latitude.nil?
+    return true if latitude && longitude.blank?
+    return true if longitude && latitude.blank?
   end
 
   def score_for(city)
     scores = [score_by_length_for(city)]
     scores << score_by_population_for(city)
+    scores << score_by_distance_for(city) if lat_long_present?
 
     calculate_score_with(scores)
   end
@@ -66,6 +71,14 @@ class Suggestion
 
   def score_by_population_for(city)
     1 - Float(ParseDatas::MAX_POPULATIONS)/city.population
+  end
+
+  def score_by_distance_for(city)
+    1 - distance_for(city) / (Math::PI*Geocoder::Calculations::EARTH_RADIUS)
+  end
+
+  def distance_for(city)
+    Geocoder::Calculations.distance_between([latitude, longitude], [city.latitude.to_f, city.longitude.to_f], :units => :km)
   end
 
   def calculate_score_with(scores)

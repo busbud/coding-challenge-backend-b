@@ -147,6 +147,26 @@ describe Suggestion do
     end
   end
 
+  describe '#score_by_distance_for' do
+    before { suggestion.stub(:q => "london", :latitude => 42.98339, :longitude => -81.23304) }
+
+    subject { suggestion.send(:score_by_distance_for, city) }
+
+    it "should return max score" do
+      expect(subject).to eql(1.0)
+    end
+  end
+
+  describe '#distance_for' do
+    before { suggestion.stub(:q => "london", :latitude => 42.98339, :longitude => -81.23304) }
+
+    subject { suggestion.send(:distance_for, city) }
+
+    it "should return distance eql 0" do
+      expect(subject).to eql(0.0)
+    end
+  end
+
   describe '#calculate_score_with' do
     let(:scores) { [1,1,1] }
     before { suggestion.stub(:population => 5000) }
