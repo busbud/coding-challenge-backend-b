@@ -59,6 +59,13 @@ describe Suggestion do
       end
     end
 
+    context 'with limit' do
+      let(:params) { {:q => 'london', :limit => 1} }
+
+      it "should return results" do
+        expect(subject.length).to eql(1)
+      end
+    end
   end
 
   describe '#search_according_query' do

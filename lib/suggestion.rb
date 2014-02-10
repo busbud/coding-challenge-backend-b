@@ -4,7 +4,7 @@ require 'active_support/all'
 
 class Suggestion
   attr_accessor :cities
-  attr_accessor :q, :latitude, :longitude
+  attr_accessor :q, :latitude, :longitude, :limit
 
   def initialize(cities, params = {})
     params.symbolize_keys!
@@ -13,6 +13,7 @@ class Suggestion
     @q         = params.fetch(:q, nil)
     @latitude  = params.fetch(:latitude, nil)
     @longitude = params.fetch(:longitude, nil)
+    @limit     = params.fetch(:limit, 0).to_i
   end
 
   def results
@@ -21,11 +22,11 @@ class Suggestion
         :name      => city.complete_name,
         :latitude  => city.latitude,
         :longitude => city.longitude,
-        :score     => score_for(city)
+        :score     => score_for(city),
       }
     end
 
-    results.sort_by{ |x| [-x[:score], x[:name]] }
+    results.sort_by{ |x| [-x[:score], x[:name]] }[0..limit-1]
   end
 
   def errors
