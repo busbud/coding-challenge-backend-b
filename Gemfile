@@ -11,7 +11,8 @@ gem 'geocoder', '~> 1.1.9'
 
 gem 'redis'   , '~> 3.0.7'
 
-group 'development' do
+group :development, :test do
   gem 'rspec', '~>2.14.1'
   gem 'rack-test', '~>0.6.2'
+  gem 'fakeredis', '~> 0.4.3'
 end
