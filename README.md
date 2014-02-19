@@ -150,7 +150,7 @@ Implemented on Heroku here: http://powerful-sierra-1219.herokuapp.com/
 My solution consists of two main components:
 - `CityMatcher`, a class responsible for parsing the city data file, and then
   returning cities that match a partial city name. Partial city names provided
-  for the lookup and case insensitive, and do not treat accented charaters
+  for the lookup are case insensitive, and do not treat accented charaters
   specially (é is considered the same as e). Lookups are done using a trie,
   a space-efficient data structure that allows for fast partial string match
   lookups.
@@ -167,21 +167,24 @@ Scoring is based on three criteria:
     the person is attempting to match that city, so 'Plymouth, PA, USA' will have a
     higher confidence score.
  2. Population: Buses are more likely to depart from cities with higher
-    populations, and on individual is more likely to be living in a city with
-    more people.  Therefore, cities with higher populations are assinged a higher
+    populations, and an individual is more likely to be living in a city with
+    more people. Therefore, cities with higher populations are assinged a higher
     confidence score.
  3. Distance: If the latitude and longitude of the user are given, a closer city
     will be assigned a higher confidence score.
 
 The highest score that can be assigned to an attribute is 1.0, while the lowest
 that can be assigned is 0.0. A higher score represents a more confident
-suggestion.  The total confidence score is a weighted average of the individual
+suggestion. The total confidence score is a weighted average of the individual
 attributes, again from 0.0 to 1.0, with the following weighting schemes used:
 
- 1. Latitude and longitude provided: 0.3 * name completeness score + 0.2 *
-    population score + 0.5 * distance core
- 2. Latitude and longitude not provided: 0.6 * name completeness score + 0.4 *
-    name population score
+ 1. Latitude and longitude provided:
+
+    `0.3 * name completeness score + 0.2 * population score + 0.5 * distance core`
+
+ 2. Latitude and longitude not provided:
+
+    `0.6 * name completeness score + 0.4 * population score`
 
 ### Mitigations to handle high levels of traffic
 
@@ -199,7 +202,7 @@ Several improvements could be made to this implementation. Some of them are:
 - Take city names in different languages into account. Right now, only the
   primary name of the city is used (the English name for non-Quebec cities, and
   the French name for Quebec cities). However, the city data file has city
-  languages in several different names for many Canadian cities, which could be
+  names in several different languages for many Canadian cities, which could be
   used for better matching.
 - Add the ability to limit the number of cities returned. This would be passed
   in the query string as `&limit=n`, where only the top `n` cities would be

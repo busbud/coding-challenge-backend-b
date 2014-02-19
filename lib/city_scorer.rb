@@ -31,7 +31,7 @@ require 'json'
 # 1. Latitude and longitude provided:
 #   0.3 * name completeness score + 0.2 * population score + 0.5 * distance score
 # 2. Latitude and longitude not provided:
-#   0.6 * name completeness score + 0.4 * name population score
+#   0.6 * name completeness score + 0.4 * population score
 #
 #
 # Expceted usage of the class is as follows:
@@ -39,7 +39,7 @@ require 'json'
 # city_scorer = CityScorer.new(city_list)
 # city_scorer.score_cities
 # city_scorer.cities_to_hash
-# => An array of the cities, sorted by score descending, where each city is of type Hash
+# => An array of the cities, sorted descending by score, where each city is of type Hash
 class CityScorer
 
   City = Struct.new(:name, :lat, :long, :population, :name_completeness_score,
