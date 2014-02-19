@@ -2,9 +2,14 @@ GEM
   remote: https://rubygems.org/
   specs:
     daemons (1.1.9)
+    dalli (2.7.0)
     diff-lcs (1.2.4)
     eventmachine (1.0.3)
+    fast_trie (0.5.0)
+    haversine (0.3.0)
     rack (1.5.2)
+    rack-cache (1.2)
+      rack (>= 0.4)
     rack-protection (1.5.1)
       rack
     rack-test (0.6.2)
@@ -31,6 +36,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dalli (~> 2.7.0)
+  fast_trie (~> 0.5.0)
+  haversine (~> 0.3.0)
+  rack-cache (~> 1.2)
   rack-test (~> 0.6.2)
   rspec (~> 2.14.1)
   sinatra (~> 1.4.4)
