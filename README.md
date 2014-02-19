@@ -150,7 +150,7 @@ Implemented on Heroku here: http://powerful-sierra-1219.herokuapp.com/
 My solution consists of two main components:
 - `CityMatcher`, a class responsible for parsing the city data file, and then
   returning cities that match a partial city name. Partial city names provided
-  for the lookup are case insensitive, and do not treat accented charaters
+  for the lookup are case insensitive, and do not treat accented characters
   specially (é is considered the same as e). Lookups are done using a trie,
   a space-efficient data structure that allows for fast partial string match
   lookups.
