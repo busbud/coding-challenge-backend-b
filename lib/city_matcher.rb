@@ -80,6 +80,6 @@ class CityMatcher
   def possible_cities(partial_name)
     return nil unless partial_name
     city_names = @city_trie.children(remove_accented_characters(partial_name.downcase))
-    return city_names.map { |c| @cities[c] }.flatten
+    return city_names.map { |c| @cities[c] }.flatten.compact
   end
 end
