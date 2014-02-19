@@ -212,3 +212,5 @@ Several improvements could be made to this implementation. Some of them are:
   scores to cities in the same country.
 - Use a more persistent key-value store (Redis) instead of Memcache, so that if
   there is an outage our caches do not go cold.
+- The Trie class used does not support apostrophes in names, which some Hawaiian
+  cities have. We should make our own Trie class that supports these characters

@@ -62,12 +62,7 @@ class CityMatcher
         population
       )
 
-      # In order for our lookups to be case-insensitive, we use a city's downcased
-      # name as keys in @citiess and @city_trie.
-      # We also remove any accented characters, so that English users can still find
-      # cities with French accents.
-      # (For example, 'Montré' and 'Montre' will both match 'Montréal')
-      lookup_name = remove_accented_characters(full_name.downcase)
+      lookup_name = normalize_name(full_name)
       @cities[lookup_name] = @cities.fetch(lookup_name, []) << city
       @city_trie.add(lookup_name)
     end
@@ -79,7 +74,19 @@ class CityMatcher
   # and language insensitive.
   def possible_cities(partial_name)
     return nil unless partial_name
-    city_names = @city_trie.children(remove_accented_characters(partial_name.downcase))
+    city_names = @city_trie.children(normalize_name(partial_name))
     return city_names.map { |c| @cities[c] }.flatten.compact
+  end
+
+  private
+  def normalize_name(name)
+    # In order for our lookups to be case-insensitive, we use a city's downcased
+    # name as keys in @citiess and @city_trie.
+    # We also remove any accented characters, so that English users can still find
+    # cities with French accents.
+    # (For example, 'Montré' and 'Montre' will both match 'Montréal')
+    # The Trie class used does not support "'" in strings, so we sub these out.
+    # A better solution would be to implement our own trie
+    remove_accented_characters(name.downcase.gsub("'", ''))
   end
 end
