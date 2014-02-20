@@ -9,8 +9,7 @@ describe CityMatcher do
       city_matcher = CityMatcher.new(test_data_file)
       cities = city_matcher.instance_variable_get(:@cities)
 
-      expect(cities['abbotsford, bc, canada'].count).to eq(1)
-      abbotsford = cities['abbotsford, bc, canada'].first
+      abbotsford = cities['abbotsford, bc, canada']
       expect(abbotsford.name).to eq('Abbotsford, BC, Canada')
       expect(abbotsford.lat).to eq(49.05798)
       expect(abbotsford.long).to eq(-122.25257)

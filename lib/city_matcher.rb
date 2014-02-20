@@ -63,7 +63,7 @@ class CityMatcher
       )
 
       lookup_name = normalize_name(full_name)
-      @cities[lookup_name] = @cities.fetch(lookup_name, []) << city
+      @cities[lookup_name] = city
       @city_trie.add(lookup_name)
     end
   end
@@ -75,7 +75,7 @@ class CityMatcher
   def possible_cities(partial_name)
     return nil unless partial_name
     city_names = @city_trie.children(normalize_name(partial_name))
-    return city_names.map { |c| @cities[c] }.flatten.compact
+    return city_names.map { |c| @cities[c] }
   end
 
   private
