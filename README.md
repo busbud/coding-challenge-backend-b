@@ -142,3 +142,76 @@ Thin web server (v1.6.1 codename Death Proof)
 Maximum connections set to 1024
 Listening on 0.0.0.0:3000, CTRL+C to stop
 ```
+
+## Implementation
+
+Implemented on Heroku here: http://powerful-sierra-1219.herokuapp.com/
+
+My solution consists of two main components:
+- `CityMatcher`, a class responsible for parsing the city data file, and then
+  returning cities that match a partial city name. Partial city names provided
+  for the lookup are case insensitive, and do not treat accented characters
+  specially (é is considered the same as e). Lookups are done using a trie,
+  a space-efficient data structure that allows for fast partial string match
+  lookups.
+- `CityScorer`, a class which is responsble for assigning a confidence scores to
+   a set of cities.
+
+### Scoring
+
+Scoring is based on three criteria:
+
+ 1. Name completeness: Potentially matching cities for the partial match
+    'Plymouth' are 'Plymouth, PA, USA' and 'Plymouth Meeting, PA, USA'. The
+    closer the partial match is to the full city name, the more likely it is that
+    the person is attempting to match that city, so 'Plymouth, PA, USA' will have a
+    higher confidence score.
+ 2. Population: Buses are more likely to depart from cities with higher
+    populations, and an individual is more likely to be living in a city with
+    more people. Therefore, cities with higher populations are assinged a higher
+    confidence score.
+ 3. Distance: If the latitude and longitude of the user are given, a closer city
+    will be assigned a higher confidence score.
+
+The highest score that can be assigned to an attribute is 1.0, while the lowest
+that can be assigned is 0.0. A higher score represents a more confident
+suggestion. The total confidence score is a weighted average of the individual
+attributes, again from 0.0 to 1.0, with the following weighting schemes used:
+
+ 1. Latitude and longitude provided:
+
+    `0.3 * name completeness score + 0.2 * population score + 0.5 * distance core`
+
+ 2. Latitude and longitude not provided:
+
+    `0.6 * name completeness score + 0.4 * population score`
+
+### Mitigations to handle high levels of traffic
+
+In order to handle potentially high amounts of traffic, a Memcache instance
+has been created on Heroku (using MemCachier). This cache is used in two ways:
+
+ 1. HTTP requests are cached using `Rack::Cache` for 30 seconds
+ 2. The lookup for cities that match a partial city name is cached for 60
+    seconds. (This is the output of `CityMatcher`, which used by `CityScorer` to
+    compute the scores).
+
+### Future Improvements
+
+Several improvements could be made to this implementation. Some of them are:
+- Take city names in different languages into account. Right now, only the
+  primary name of the city is used (the English name for non-Quebec cities, and
+  the French name for Quebec cities). However, the city data file has city
+  names in several different languages for many Canadian cities, which could be
+  used for better matching.
+    - The Trie class that is used does not support every unicode/utf-8 character
+      (`‘` is an example of an unsupported character).  We would need to
+      implement our own trie in order to make this improvement.
+- Add the ability to limit the number of cities returned. This would be passed
+  in the query string as `&limit=n`, where only the top `n` cities would be
+  returned in the json response.
+- Update the scoring algorithm to figure out if the user is in Canada or the
+  United States by latitude/longitude or IP address, and then provide higher
+  scores to cities in the same country.
+- Use a more persistent key-value store (Redis) instead of Memcache, so that if
+  there is an outage our caches do not go cold.
