@@ -33,7 +33,9 @@ class App < Sinatra::Base
     content_type :json
 
     query = request[:q]
-    halt 400 unless query
+    if query.nil? || query.empty?
+      halt 400
+    end
     lat = request[:latitude] ? request[:latitude].to_f : nil
     long = request[:longitude] ? request[:longitude].to_f : nil
 
