@@ -85,8 +85,6 @@ class CityMatcher
     # We also remove any accented characters, so that English users can still find
     # cities with French accents.
     # (For example, 'Montré' and 'Montre' will both match 'Montréal')
-    # The Trie class used does not support "'" in strings, so we sub these out.
-    # A better solution would be to implement our own trie
-    remove_accented_characters(name.downcase.gsub("'", ''))
+    remove_accented_characters(name.downcase)
   end
 end

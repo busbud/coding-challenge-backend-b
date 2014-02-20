@@ -204,6 +204,9 @@ Several improvements could be made to this implementation. Some of them are:
   the French name for Quebec cities). However, the city data file has city
   names in several different languages for many Canadian cities, which could be
   used for better matching.
+    - The Trie class that is used does not support every unicode/utf-8 character
+      (`‘` is an example of an unsupported character).  We would need to
+      implement our own trie in order to make this improvement.
 - Add the ability to limit the number of cities returned. This would be passed
   in the query string as `&limit=n`, where only the top `n` cities would be
   returned in the json response.
@@ -212,5 +215,3 @@ Several improvements could be made to this implementation. Some of them are:
   scores to cities in the same country.
 - Use a more persistent key-value store (Redis) instead of Memcache, so that if
   there is an outage our caches do not go cold.
-- The Trie class used does not support apostrophes in names, which some Hawaiian
-  cities have. We should make our own Trie class that supports these characters

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-shared_examples_for 'a valid response' do
+shared_examples_for 'a valid response' do |city_regexp|
   it 'returns a 200' do
     expect(response.status).to eq(200)
   end
@@ -12,7 +12,7 @@ shared_examples_for 'a valid response' do
 
   it 'contains a match' do
     names = response.json_body['suggestions'].map { |r| r['name'] }
-    expect(names.grep(/montréal/i)).to_not be_empty
+    expect(names.grep(city_regexp)).to_not be_empty
   end
 
   it 'contains latitudes and longitudes' do
@@ -55,12 +55,28 @@ describe 'GET /suggestions' do
     end
   end
 
+  describe 'with a parital match' do
+    subject(:response) do
+      get '/suggestions', {:q => 'M'}
+    end
+
+    it_should_behave_like 'a valid response', /montréal/i
+  end
+
+  describe 'with accented characters in query' do
+    subject(:response) do
+      get '/suggestions', {:q => 'Mā‘'}
+    end
+
+    it_should_behave_like 'a valid response', /Mā‘ili/
+  end
+
   describe 'with a valid city' do
     subject(:response) do
       get '/suggestions', {:q => 'Montreal'}
     end
 
-    it_should_behave_like 'a valid response'
+    it_should_behave_like 'a valid response', /montréal/i
   end
 
   describe 'with a valid city, and valid longitude and latitude' do
@@ -68,7 +84,7 @@ describe 'GET /suggestions' do
       get '/suggestions', {:q => 'Montreal', :longitude => '45.28378', :latitude => '-87.3828'}
     end
 
-    it_should_behave_like 'a valid response'
+    it_should_behave_like 'a valid response', /montréal/i
   end
 
   describe 'with a valid city, and invalid longitude and latitude' do
@@ -76,6 +92,6 @@ describe 'GET /suggestions' do
       get '/suggestions', {:q => 'Montreal', :longitude => 'hi', :latitude => 'mom'}
     end
 
-    it_should_behave_like 'a valid response'
+    it_should_behave_like 'a valid response', /montréal/i
   end
 end
